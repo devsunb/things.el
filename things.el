@@ -1792,11 +1792,14 @@ With a negative count, go to the previous valid beginning of the pair."
   (put name 'things-seek-op
        (lambda (thing &optional count)
          ;; TODO this should be easier on the implementor
-         (things-move-with-count count
+         (setq count (or count 1))
+         ;; As in `things-forward', run the body the size of COUNT times and
+         ;; seek one pair in the direction of COUNT each time.
+         (things-move-with-count (abs count)
            (things-move-while-not
                (let ((bounds (things-base-bounds thing)))
                  (and bounds (= (point) (car bounds))))
-             (things--seek-char-pair open close count)))))
+             (things--seek-char-pair open close (if (cl-plusp count) 1 -1))))))
   (put name 'things-seeks-forward-begin t)
   (put name 'things-no-extend t)
   (put name 'things-overlay-position #'point)

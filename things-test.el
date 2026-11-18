@@ -45,5 +45,22 @@ It used to run its body no times and move forward when it did."
     (should-not (things-backward 'things-string))
     (should (= (point) 4))))
 
+(things-define-pair 'things-test-paren "(" ")")
+
+(ert-deftest things-test-seek-pair-backward ()
+  "Seeking backward finds the previous pair; its seek op used to run no times."
+  (things-test-with-text "(a) (b) x|"
+    (should (= (things--seek-backward 'things-test-paren 1) 5))))
+
+(ert-deftest things-test-seek-pair-backward-count ()
+  "A count of 2 seeks back two pairs."
+  (things-test-with-text "(a) (b) x|"
+    (should (= (things--seek-backward 'things-test-paren 2) 1))))
+
+(ert-deftest things-test-seek-pair-forward ()
+  "Seeking forward still finds the next pair."
+  (things-test-with-text "|x (a) (b)"
+    (should (= (things--seek-forward 'things-test-paren 1) 3))))
+
 (provide 'things-test)
 ;;; things-test.el ends here
