@@ -369,7 +369,9 @@ With a negative COUNT, move to the previous THING beginning COUNT times. Unlike
 to move at least once, return the new position. Otherwise return nil."
   (unless count
     (setq count 1))
-  (things-move-with-count count
+  ;; `things-move-with-count' runs its body COUNT times, so give it the size of
+  ;; COUNT and pass the direction to `forward-thing' below.
+  (things-move-with-count (abs count)
     (things-move-while-not
         (let ((bounds
                (save-excursion
@@ -385,7 +387,7 @@ to move at least once, return the new position. Otherwise return nil."
                (= (point) (if (cl-plusp count)
                               (cdr bounds)
                             (car bounds)))))
-      (forward-thing (things--base-thing thing)))))
+      (forward-thing (things--base-thing thing) (if (cl-plusp count) 1 -1)))))
 
 (defun things-backward (thing &optional count)
   "Move to the previous THING beginning COUNT times.
